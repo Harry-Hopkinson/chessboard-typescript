@@ -1,6 +1,6 @@
-import { State } from './state';
-import * as util from './util';
-import * as cg from './types';
+import { State } from "./state";
+import * as util from "./util";
+import * as cg from "./types";
 
 // export types
 export type Mutation<A> = (state: State) => A;
@@ -111,7 +111,7 @@ function step(state: State, now: DOMHighResTimeStamp): void {
       cfg[2] = cfg[0] * ease;
       cfg[3] = cfg[1] * ease;
     }
-    state.dom.redrawNow(true); // optimisation: don't render SVG changes during animations
+    state.dom.redrawNow(true); // optimisation: don"t render SVG changes during animations
     requestAnimationFrame((now = performance.now()) => step(state, now));
   }
 }
@@ -131,7 +131,7 @@ function animate<A>(mutation: Mutation<A>, state: State): A {
     };
     if (!alreadyRunning) step(state, performance.now());
   } else {
-    // don't animate, just render right away
+    // don"t animate, just render right away
     state.dom.redraw();
   }
   return result;
