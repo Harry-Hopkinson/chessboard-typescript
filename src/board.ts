@@ -336,11 +336,11 @@ export function getSnappedKeyAtDomPos(
   bounds: ClientRect
 ): cg.Key | undefined {
   const origPos = key2pos(orig);
-  const validSnapPos = allPos.filter(pos2 => {
+  const validSnapPos = allPos.filter((pos2: any[]) => {
     return queen(origPos[0], origPos[1], pos2[0], pos2[1]) || knight(origPos[0], origPos[1], pos2[0], pos2[1]);
   });
-  const validSnapCenters = validSnapPos.map(pos2 => computeSquareCenter(pos2key(pos2), asWhite, bounds));
-  const validSnapDistances = validSnapCenters.map(pos2 => distanceSq(pos, pos2));
+  const validSnapCenters = validSnapPos.map((pos2: any) => computeSquareCenter(pos2key(pos2), asWhite, bounds));
+  const validSnapDistances = validSnapCenters.map((pos2: any) => distanceSq(pos, pos2));
   const [closestSnapIndex] = validSnapDistances.reduce(
     (a : any, b : any, index : any) => (a[0] < b ? a : [b, index]),
     [validSnapDistances[0], 0]
