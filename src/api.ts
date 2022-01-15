@@ -2,11 +2,11 @@ import { State } from "./state";
 import * as board from "./board";
 import { write as fenWrite } from "./fen";
 import { Config, configure, applyAnimation } from "./config";
-import { anim, render } from "./anim.js";
+import { anim, render } from "./anim";
 import { cancel as dragCancel, dragNewPiece } from "./drag";
 import { DrawShape } from "./draw";
 import { explosion } from "./explosion";
-import * as cg from "./types.js";
+import * as cg from "./types";
 
 export interface Api {
   set(config: Config): void;

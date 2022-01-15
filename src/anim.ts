@@ -97,7 +97,6 @@ function computePlan(prevPieces: cg.Pieces, current: State): AnimPlan {
 function step(state: State, now: DOMHighResTimeStamp): void {
   const cur = state.animation.current;
   if (cur === undefined) {
-    // animation was canceled :(
     if (!state.dom.destroyed) state.dom.redrawNow();
     return;
   }
@@ -111,15 +110,13 @@ function step(state: State, now: DOMHighResTimeStamp): void {
       cfg[2] = cfg[0] * ease;
       cfg[3] = cfg[1] * ease;
     }
-    state.dom.redrawNow(true); // optimisation: don"t render SVG changes during animations
+    state.dom.redrawNow(true);
     requestAnimationFrame((now = performance.now()) => step(state, now));
   }
 }
 
 function animate<A>(mutation: Mutation<A>, state: State): A {
-  // clone state before mutating it
   const prevPieces: cg.Pieces = new Map(state.pieces);
-
   const result = mutation(state);
   const plan = computePlan(prevPieces, state);
   if (plan.anims.size || plan.fadings.size) {
@@ -131,13 +128,11 @@ function animate<A>(mutation: Mutation<A>, state: State): A {
     };
     if (!alreadyRunning) step(state, performance.now());
   } else {
-    // don"t animate, just render right away
     state.dom.redraw();
   }
   return result;
 }
 
-// https://gist.github.com/gre/1650294
 function easing(t: number): number {
   return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
 }

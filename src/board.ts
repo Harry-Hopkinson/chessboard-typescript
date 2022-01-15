@@ -1,7 +1,7 @@
-import { HeadlessState } from "./state.js";
-import { pos2key, key2pos, opposite, distanceSq, allPos, computeSquareCenter } from "./util.js";
-import { premove, queen, knight } from "./premove.js";
-import * as cg from "./types.js";
+import { HeadlessState } from "./state";
+import { pos2key, key2pos, opposite, distanceSq, allPos, computeSquareCenter } from "./util";
+import { premove, queen, knight } from "./premove";
+import * as cg from "./types";
 
 export function callUserFunction<T extends (...args: any[]) => void>(f: T | undefined, ...args: Parameters<T>): void {
   if (f) setTimeout(() => f(...args), 1);
@@ -341,8 +341,8 @@ export function getSnappedKeyAtDomPos(
   });
   const validSnapCenters = validSnapPos.map(pos2 => computeSquareCenter(pos2key(pos2), asWhite, bounds));
   const validSnapDistances = validSnapCenters.map(pos2 => distanceSq(pos, pos2));
-  const [, closestSnapIndex] = validSnapDistances.reduce(
-    (a, b, index) => (a[0] < b ? a : [b, index]),
+  const [closestSnapIndex] = validSnapDistances.reduce(
+    (a : any, b : any, index : any) => (a[0] < b ? a : [b, index]),
     [validSnapDistances[0], 0]
   );
   return pos2key(validSnapPos[closestSnapIndex]);
