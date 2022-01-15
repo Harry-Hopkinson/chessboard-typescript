@@ -1,12 +1,12 @@
-import { Api, start } from './api.js';
-import { Config, configure } from './config.js';
-import { HeadlessState, State, defaults } from './state.js';
+import { Api, start } from "./api.js";
+import { Config, configure } from "./config.js";
+import { HeadlessState, State, defaults } from "./state.js";
 
-import { renderWrap } from './wrap.js';
-import * as events from './events.js';
-import { render, renderResized, updateBounds } from './render.js';
-import * as svg from './svg.js';
-import * as util from './util.js';
+import { renderWrap } from "./wrap.js";
+import * as events from "./events.js";
+import { render, renderResized, updateBounds } from "./render.js";
+import * as svg from "./svg.js";
+import * as util from "./util.js";
 
 export function Chessground(element: HTMLElement, config?: Config): Api {
   const maybeState: State | HeadlessState = defaults();
@@ -14,7 +14,7 @@ export function Chessground(element: HTMLElement, config?: Config): Api {
   configure(maybeState, config || {});
 
   function redrawAll(): State {
-    const prevUnbind = 'dom' in maybeState ? maybeState.dom.unbind : undefined;
+    const prevUnbind = "dom" in maybeState ? maybeState.dom.unbind : undefined;
     // compute bounds from existing board element if possible
     // this allows non-square boards from CSS to be handled (for 3D)
     const elements = renderWrap(element, maybeState),
@@ -35,7 +35,7 @@ export function Chessground(element: HTMLElement, config?: Config): Api {
       redrawNow,
       unbind: prevUnbind,
     };
-    state.drawable.prevSvgHash = '';
+    state.drawable.prevSvgHash = "";
     updateBounds(state);
     redrawNow(false);
     events.bindBoard(state, onResize);
