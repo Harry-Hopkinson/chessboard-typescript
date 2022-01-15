@@ -1,7 +1,7 @@
-import { State } from './state.js';
-import { unselect, cancelMove, getKeyAtDomPos, getSnappedKeyAtDomPos, whitePov } from './board.js';
-import { eventPosition, isRightButton } from './util.js';
-import * as cg from './types.js';
+import { State } from "./state.js";
+import { unselect, cancelMove, getKeyAtDomPos, getSnappedKeyAtDomPos, whitePov } from "./board.js";
+import { eventPosition, isRightButton } from "./util.js";
+import * as cg from "./types.js";
 
 export interface DrawShape {
   orig: cg.Key;
@@ -34,16 +34,15 @@ export interface DrawModifiers {
 }
 
 export interface Drawable {
-  enabled: boolean; // can draw
-  visible: boolean; // can view
+  enabled: boolean;
+  visible: boolean;
   defaultSnapToValidMove: boolean;
   eraseOnClick: boolean;
   onChange?: (shapes: DrawShape[]) => void;
-  shapes: DrawShape[]; // user shapes
-  autoShapes: DrawShape[]; // computer shapes
+  shapes: DrawShape[];
+  autoShapes: DrawShape[];
   current?: DrawCurrent;
   brushes: DrawBrushes;
-  // drawable SVG pieces; used for crazyhouse drop
   pieces: {
     baseUrl: string;
   };
@@ -51,15 +50,15 @@ export interface Drawable {
 }
 
 export interface DrawCurrent {
-  orig: cg.Key; // orig key of drawing
-  dest?: cg.Key; // shape dest, or undefined for circle
-  mouseSq?: cg.Key; // square being moused over
-  pos: cg.NumberPair; // relative current position
-  brush: string; // brush name for shape
-  snapToValidMove: boolean; // whether to snap to valid piece moves
+  orig: cg.Key;
+  dest?: cg.Key;
+  mouseSq?: cg.Key;
+  pos: cg.NumberPair;
+  brush: string;
+  snapToValidMove: boolean;
 }
 
-const brushes = ['green', 'red', 'blue', 'yellow'];
+const brushes = ["green", "red", "blue", "yellow"];
 
 export function start(state: State, e: cg.MouchEvent): void {
   // support one finger touch only
@@ -130,7 +129,7 @@ export function clear(state: State): void {
 
 function eventBrush(e: cg.MouchEvent): string {
   const modA = (e.shiftKey || e.ctrlKey) && isRightButton(e);
-  const modB = e.altKey || e.metaKey || e.getModifierState?.('AltGraph');
+  const modB = e.altKey || e.metaKey || e.getModifierState?.("AltGraph");
   return brushes[(modA ? 1 : 0) + (modB ? 2 : 0)];
 }
 
