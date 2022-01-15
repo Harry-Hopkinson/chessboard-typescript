@@ -1,10 +1,10 @@
-import { State } from './state.js';
-import { key2pos } from './util.js';
-import { Drawable, DrawShape, DrawShapePiece, DrawBrush, DrawBrushes, DrawModifiers } from './draw.js';
-import * as cg from './types.js';
+import { State } from "./state";
+import { key2pos } from "./util";
+import { Drawable, DrawShape, DrawShapePiece, DrawBrush, DrawBrushes, DrawModifiers } from "./draw";
+import * as cg from "./types";
 
 export function createElement(tagName: string): SVGElement {
-  return document.createElementNS('http://www.w3.org/2000/svg', tagName);
+  return document.createElementNS("http://www.w3.org/2000/svg", tagName);
 }
 
 interface Shape {
@@ -13,9 +13,9 @@ interface Shape {
   hash: Hash;
 }
 
-type CustomBrushes = Map<string, DrawBrush>; // by hash
+type CustomBrushes = Map<string, DrawBrush>;
 
-type ArrowDests = Map<cg.Key, number>; // how many arrows land on a square
+type ArrowDests = Map<cg.Key, number>;
 
 type Hash = string;
 
@@ -44,30 +44,13 @@ export function renderSvg(state: State, svg: SVGElement, customSvg: SVGElement):
       hash: shapeHash(cur, arrowDests, true, bounds),
     });
 
-  const fullHash = shapes.map(sc => sc.hash).join(';');
+  const fullHash = shapes.map(sc => sc.hash).join(";");
   if (fullHash === state.drawable.prevSvgHash) return;
   state.drawable.prevSvgHash = fullHash;
 
-  /*
-    -- DOM hierarchy --
-    <svg class="cg-shapes">      (<= svg)
-      <defs>
-        ...(for brushes)...
-      </defs>
-      <g>
-        ...(for arrows, circles, and pieces)...
-      </g>
-    </svg>
-    <svg class="cg-custom-svgs"> (<= customSvg)
-      <g>
-        ...(for custom svgs)...
-      </g>
-    </svg>
-  */
-
-  const defsEl = svg.querySelector('defs') as SVGElement;
-  const shapesEl = svg.querySelector('g') as SVGElement;
-  const customSvgsEl = customSvg.querySelector('g') as SVGElement;
+  const defsEl = svg.querySelector("defs") as SVGElement;
+  const shapesEl = svg.querySelector("g") as SVGElement;
+  const customSvgsEl = customSvg.querySelector("g") as SVGElement;
 
   syncDefs(d, shapes, defsEl);
   syncShapes(
@@ -86,7 +69,6 @@ export function renderSvg(state: State, svg: SVGElement, customSvg: SVGElement):
   );
 }
 
-// append only. Don't try to update/remove.
 function syncDefs(d: Drawable, shapes: Shape[], defsEl: SVGElement) {
   const brushes: CustomBrushes = new Map();
   let brush: DrawBrush;
@@ -100,7 +82,7 @@ function syncDefs(d: Drawable, shapes: Shape[], defsEl: SVGElement) {
   const keysInDom = new Set();
   let el: SVGElement | undefined = defsEl.firstChild as SVGElement;
   while (el) {
-    keysInDom.add(el.getAttribute('cgKey'));
+    keysInDom.add(el.getAttribute("cgKey"));
     el = el.nextSibling as SVGElement | undefined;
   }
   for (const [key, brush] of brushes.entries()) {
@@ -108,7 +90,6 @@ function syncDefs(d: Drawable, shapes: Shape[], defsEl: SVGElement) {
   }
 }
 
-// append and remove only. No updates.
 function syncShapes(
   state: State,
   shapes: Shape[],
@@ -123,16 +104,12 @@ function syncShapes(
   let el: SVGElement | undefined = root.firstChild as SVGElement,
     elHash: Hash;
   while (el) {
-    elHash = el.getAttribute('cgHash') as Hash;
-    // found a shape element that's here to stay
+    elHash = el.getAttribute("cgHash") as Hash;
     if (hashesInDom.has(elHash)) hashesInDom.set(elHash, true);
-    // or remove it
     else toRemove.push(el);
     el = el.nextSibling as SVGElement | undefined;
   }
-  // remove old shapes
   for (const el of toRemove) root.removeChild(el);
-  // insert shapes that are not yet in dom
   for (const sc of shapes) {
     if (!hashesInDom.get(sc.hash)) root.appendChild(renderShape(state, sc, brushes, arrowDests, bounds));
   }
@@ -157,24 +134,23 @@ function shapeHash(
     customSvg && customSvgHash(customSvg),
   ]
     .filter(x => x)
-    .join(',');
+    .join(",");
 }
 
 function pieceHash(piece: DrawShapePiece): Hash {
-  return [piece.color, piece.role, piece.scale].filter(x => x).join(',');
+  return [piece.color, piece.role, piece.scale].filter(x => x).join(",");
 }
 
 function modifiersHash(m: DrawModifiers): Hash {
-  return '' + (m.lineWidth || '');
+  return "" + (m.lineWidth || "");
 }
 
 function customSvgHash(s: string): Hash {
-  // Rolling hash with base 31 (cf. https://stackoverflow.com/questions/7616461/generate-a-hash-from-string-in-javascript)
   let h = 0;
   for (let i = 0; i < s.length; i++) {
     h = ((h << 5) - h + s.charCodeAt(i)) >>> 0;
   }
-  return 'custom-' + h.toString();
+  return "custom-" + h.toString();
 }
 
 function renderShape(
@@ -210,7 +186,7 @@ function renderShape(
       );
     } else el = renderCircle(brushes[shape.brush!], orig, current, bounds);
   }
-  el.setAttribute('cgHash', hash);
+  el.setAttribute("cgHash", hash);
   return el;
 }
 
@@ -218,10 +194,10 @@ function renderCustomSvg(customSvg: string, pos: cg.Pos, bounds: ClientRect): SV
   const [x, y] = pos2user(pos, bounds);
 
   // Translate to top-left of `orig` square
-  const g = setAttributes(createElement('g'), { transform: `translate(${x},${y})` });
+  const g = setAttributes(createElement("g"), { transform: `translate(${x},${y})` });
 
   // Give 100x100 coordinate system to the user for `orig` square
-  const svg = setAttributes(createElement('svg'), { width: 1, height: 1, viewBox: '0 0 100 100' });
+  const svg = setAttributes(createElement("svg"), { width: 1, height: 1, viewBox: "0 0 100 100" });
 
   g.appendChild(svg);
   svg.innerHTML = customSvg;
@@ -232,10 +208,10 @@ function renderCircle(brush: DrawBrush, pos: cg.Pos, current: boolean, bounds: C
   const o = pos2user(pos, bounds),
     widths = circleWidth(),
     radius = (bounds.width + bounds.height) / (4 * Math.max(bounds.width, bounds.height));
-  return setAttributes(createElement('circle'), {
+  return setAttributes(createElement("circle"), {
     stroke: brush.color,
-    'stroke-width': widths[current ? 0 : 1],
-    fill: 'none',
+    "stroke-width": widths[current ? 0 : 1],
+    fill: "none",
     opacity: opacity(brush, current),
     cx: o[0],
     cy: o[1],
@@ -259,11 +235,11 @@ function renderArrow(
     angle = Math.atan2(dy, dx),
     xo = Math.cos(angle) * m,
     yo = Math.sin(angle) * m;
-  return setAttributes(createElement('line'), {
+  return setAttributes(createElement("line"), {
     stroke: brush.color,
-    'stroke-width': lineWidth(brush, current),
-    'stroke-linecap': 'round',
-    'marker-end': 'url(#arrowhead-' + brush.key + ')',
+    "stroke-width": lineWidth(brush, current),
+    "stroke-linecap": "round",
+    "marker-end": "url(#arrowhead-" + brush.key + ")",
     opacity: opacity(brush, current),
     x1: a[0],
     y1: a[1],
@@ -274,35 +250,35 @@ function renderArrow(
 
 function renderPiece(baseUrl: string, pos: cg.Pos, piece: DrawShapePiece, bounds: ClientRect): SVGElement {
   const o = pos2user(pos, bounds),
-    name = piece.color[0] + (piece.role === 'knight' ? 'n' : piece.role[0]).toUpperCase();
-  return setAttributes(createElement('image'), {
+    name = piece.color[0] + (piece.role === "knight" ? "n" : piece.role[0]).toUpperCase();
+  return setAttributes(createElement("image"), {
     className: `${piece.role} ${piece.color}`,
     x: o[0] - 0.5,
     y: o[1] - 0.5,
     width: 1,
     height: 1,
-    href: baseUrl + name + '.svg',
+    href: baseUrl + name + ".svg",
     transform: `scale(${piece.scale || 1})`,
-    'transform-origin': `${o[0]} ${o[1]}`,
+    "transform-origin": `${o[0]} ${o[1]}`,
   });
 }
 
 function renderMarker(brush: DrawBrush): SVGElement {
-  const marker = setAttributes(createElement('marker'), {
-    id: 'arrowhead-' + brush.key,
-    orient: 'auto',
+  const marker = setAttributes(createElement("marker"), {
+    id: "arrowhead-" + brush.key,
+    orient: "auto",
     markerWidth: 4,
     markerHeight: 8,
     refX: 2.05,
     refY: 2.01,
   });
   marker.appendChild(
-    setAttributes(createElement('path'), {
-      d: 'M0,0 V4 L3,2 Z',
+    setAttributes(createElement("path"), {
+      d: "M0,0 V4 L3,2 Z",
       fill: brush.color,
     })
   );
-  marker.setAttribute('cgKey', brush.key);
+  marker.setAttribute("cgKey", brush.key);
   return marker;
 }
 
@@ -312,7 +288,7 @@ export function setAttributes(el: SVGElement, attrs: { [key: string]: any }): SV
 }
 
 function orient(pos: cg.Pos, color: cg.Color): cg.Pos {
-  return color === 'white' ? pos : [7 - pos[0], 7 - pos[1]];
+  return color === "white" ? pos : [7 - pos[0], 7 - pos[1]];
 }
 
 function makeCustomBrush(base: DrawBrush, modifiers: DrawModifiers): DrawBrush {
@@ -320,7 +296,7 @@ function makeCustomBrush(base: DrawBrush, modifiers: DrawModifiers): DrawBrush {
     color: base.color,
     opacity: Math.round(base.opacity * 10) / 10,
     lineWidth: Math.round(modifiers.lineWidth || base.lineWidth),
-    key: [base.key, modifiers.lineWidth].filter(x => x).join(''),
+    key: [base.key, modifiers.lineWidth].filter(x => x).join(""),
   };
 }
 
