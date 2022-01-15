@@ -7,7 +7,7 @@ import { render, renderResized, updateBounds } from "./render";
 import * as svg from "./svg";
 import * as util from "./util";
 
-export function Chessground(element: HTMLElement, config?: Config): Api {
+export function chessboard(element: HTMLElement, config?: Config): Api {
   const maybeState: State | HeadlessState = defaults();
 
   configure(maybeState, config || {});
