@@ -11,7 +11,7 @@ function pawn(color: cg.Color): Mobility {
   return (x1, y1, x2, y2) =>
     diff(x1, x2) < 2 &&
     (color === "white"
-      ? // allow 2 squares from first two ranks, for horde
+      ?
         y2 === y1 + 1 || (y1 <= 1 && y2 === y1 + 2 && x1 === x2)
       : y2 === y1 - 1 || (y1 >= 6 && y2 === y1 - 2 && x1 === x2));
 }
